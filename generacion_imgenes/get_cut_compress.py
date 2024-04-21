@@ -137,7 +137,7 @@ def get_Rad(date_ini,date_fin):
                 sel_y = np.where((y>=ymin) & (y<=ymax))
 
                 x_col = x[sel_x]
-                y_col = x[sel_y]
+                y_col = y[sel_y]
 
                 print("Croping radiance images...")
                 print("\n")
@@ -403,7 +403,7 @@ def get_LST(date_ini,date_fin):
                 sel_y = np.where((y>=ymin) & (y<=ymax))
 
                 x_col = x[sel_x]
-                y_col = x[sel_y]
+                y_col = y[sel_y]
 
                 print("Croping LST images...")
                 print("\n")
@@ -616,7 +616,7 @@ def get_TPW(date_ini,date_fin):
                 sel_y = np.where((y>=ymin) & (y<=ymax))
 
                 x_col = x[sel_x]
-                y_col = x[sel_y]
+                y_col = y[sel_y]
 
                 print("Croping TPW images...")
                 print("\n")
