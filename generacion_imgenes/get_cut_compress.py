@@ -175,7 +175,7 @@ def get_Rad(date_ini,date_fin):
 
                 print("Creating new NETCDF file with all bands radiances...")
                 print("\n")
-                file_name = 'RadF_' + date
+                file_name = 'RadF_' + date + '.nc'
                 ds_out = Dataset(file_name,'w',format='NETCDF4')
                 ds_out.createDimension('y',len(y_col))
                 ds_out.createDimension('x',len(x_col))
@@ -254,6 +254,22 @@ def get_Rad(date_ini,date_fin):
 
                 ds_out.missing_rad = missing_rad
                 ds_out.close()
+                ds.close()
+                
+                if name + '08_G16_s' + date in lista_paths:
+                    ds8.close()
+
+                if name + '09_G16_s' + date in lista_paths:
+                    ds9.close()
+
+                if name + '10_G16_s' + date in lista_paths:
+                    ds10.close()
+
+                if name + '13_G16_s' + date in lista_paths:
+                    ds13.close()
+                
+                if name + '14_G16_s' + date in lista_paths:
+                    ds14.close()
 
                 print("Compressig file...")
                 comman_line_compression = os.system(f"nccopy -d9 {file_name} {path_out_c + 'RadFC_' + date}")
