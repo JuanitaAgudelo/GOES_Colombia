@@ -770,7 +770,7 @@ def get_TPW(date_ini,date_fin):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
-        description="Script that adds 3 numbers from CMD"
+        description="Script that download, crop and compress images from GOES satellite for the products: LST, TPW and radiances"
     )
     parser.add_argument("--function", required=True, type=str)
     parser.add_argument("--date_ini", required=False, type=str)
