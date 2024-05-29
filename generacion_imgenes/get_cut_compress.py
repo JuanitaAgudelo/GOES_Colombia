@@ -29,7 +29,7 @@ def get_Rad(date_ini,date_fin):
                                             datetime(int(date_fin[:4]),
                                                     int(date_fin[5:7]),int(date_fin[8:10]),
                                                     int(date_fin[11:13]),int(date_fin[14:])), 
-                                            timedelta(minutes=60)).astype(datetime))
+                                            timedelta(minutes=9)).astype(datetime))
 
     path_out = 'radiances/'
     path_out_c = 'radiances_c/'
