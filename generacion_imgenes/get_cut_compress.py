@@ -21,7 +21,8 @@ def get_Rad(date_ini,date_fin):
     datefin : str ['YY-MM-DD HH:MM']
         Final download date  
     """
-
+    #crea un dataframe con fechas entre dateini y datefin con un delta de tiempo de 9 minutos. Los objetos
+    #almacenados en el dataframe son de tipo timestep
     df = pd.DataFrame()
     df['Tiempo'] = pd.to_datetime(np.arange(datetime(int(date_ini[:4]),
                                                     int(date_ini[5:7]),int(date_ini[8:10]),
@@ -31,26 +32,26 @@ def get_Rad(date_ini,date_fin):
                                                     int(date_fin[11:13]),int(date_fin[14:])), 
                                             timedelta(minutes=9)).astype(datetime))
 
-    path_out = 'radiances/'
-    path_out_c = 'radiances_c/'
-    canales = ['08', '09', '10', '13', '14']
+    path_out = 'radiances/'  #carpeta donde se almacenan las imagenes completas descargadas
+    path_out_c = 'radiances_c/'  #carpeta donde se almacenan las imagenes después de recortarlas y comprimirlas
+    canales = ['08', '09', '10', '13', '14']  #lista con los canales que se desean descargar y almacenar en las imagenes
     
     #revisar que ya estén creados los archivos. y los folders, 
     #para reactivar el codigo para que el usuario no. TOmar la fecha del archivo final y que sea el comienzo 
     #de la fecha de la descarga, la final la que el usuario digita por consola o en el arcvhivo de
     #configuracion
     # Parent Directory path 
-    parent_dir = os.getcwd()
+    parent_dir = os.getcwd()  #obtiene el directorio de trabajo actual
     
     # Path 
-    original_path = os.path.join(parent_dir, path_out)
-    path_c = os.path.join(parent_dir, path_out_c) 
+    original_path = os.path.join(parent_dir, path_out)  #genera la ruta para crear la carpeta donde se almacenan las imagenes completas 
+    path_c = os.path.join(parent_dir, path_out_c)  #genera la ruta para crear la carpeta donde se almacenan las imagenes recortadas y comprimidas
     
-    if not os.path.exists(original_path):
-        os.mkdir(original_path)    
+    if not os.path.exists(original_path):  #antes de crear el directorio, valida que no exista
+        os.mkdir(original_path)  #crea el directorio con la carpeta donde se almacenan las imagenes completas     
     
-    if not os.path.exists(path_c):
-        os.mkdir(path_c)
+    if not os.path.exists(path_c):  #antes de crear el directorio, valida que no exista
+        os.mkdir(path_c)  #crea el directorio con la carpeta donde se almacenan las imagenes recortadas y comprimidas
             
     print("Directory '% s' created" % original_path) 
     print("Directory '% s' created" % path_c) 
@@ -60,6 +61,7 @@ def get_Rad(date_ini,date_fin):
             print('Datetime:',dd)
             print("\n")
 
+            #transforma las fechas del dataframe de timestep a formato '%Y%m%d%H%M%S'
             T_ini = str(dd)
             T_ini = T_ini.replace('-', '')
             T_ini = T_ini.replace(':', '')
@@ -69,7 +71,8 @@ def get_Rad(date_ini,date_fin):
             T_fin = T_fin.replace('-', '')
             T_fin = T_fin.replace(':', '')
             T_fin = T_fin.replace(' ', '-')
-            #fls = gen_Rad(T_ini,T_fin,path_out,canales,ltmin=4.6563-0.1,ltmax=4.6563+0.1,lnmin=-74.100-0.1, lnmax=-74.100+0.1,temp = 'LST_temp/')
+            
+            #descarga las imágenes
             try: 
                 download = GOES.download('goes16', 'ABI-L1b-RadF', DateTimeIni = T_ini, DateTimeFin = T_fin,
                     channel = canales, rename_fmt = '%Y%m%d%H%M%S', path_out = path_out)
@@ -80,7 +83,7 @@ def get_Rad(date_ini,date_fin):
             print("\n")
             
             missing_rad = []
-            lista_paths = os.listdir(path_out)
+            lista_paths = os.listdir(path_out)  #lista los elemntos de la carpeta, lista los nombres de las imagenes descargadas
             if len(lista_paths) != 0:
                 if lista_paths[0][0] == 'O':
                     name = lista_paths[0][:19]
@@ -89,10 +92,11 @@ def get_Rad(date_ini,date_fin):
                     print(f"NO hay radianzas descargadas en la carpeta: {path_out}")
                     print("\n")
                 
-                if name + '08_G16_s' + date in lista_paths:
-                    ds8 = Dataset(path_out + name + '08_G16_s'+ date)
+                #se abren las imagenes de cada radianza 
+                if name + '08_G16_s' + date in lista_paths:  #se valida que la imagen de la radianza exista en la carpeta
+                    ds8 = Dataset(path_out + name + '08_G16_s'+ date)  #se lee la imagen
                 else: 
-                    missing_rad.append(8)
+                    missing_rad.append(8)  #si no existe, se agrega a la lista de radianzas faltantes
 
                 if name + '09_G16_s' + date in lista_paths:
                     ds9 = Dataset(path_out + name + '09_G16_s' + date)
@@ -114,25 +118,31 @@ def get_Rad(date_ini,date_fin):
                 else: 
                     missing_rad.append(14)
 
+                #se abre un dataset de referencia para obtener los valores de la altura del satelite y los angulos de inclinación
                 ds = Dataset(path_out + lista_paths[0])
                 sat_h= ds.variables['goes_imager_projection'].perspective_point_height
                 sat_lon = ds.variables['goes_imager_projection'].longitude_of_projection_origin
                 sat_sweep = ds.variables['goes_imager_projection'].sweep_angle_axis
 
+                #variables x,y de la imagen
                 x = ds.variables['x'][:]
                 y = ds.variables['y'][:]
 
+                #proyección para trasformar de coordenadas de la imagen a coordenadas geograficas
                 p = Proj(proj='geos', h=sat_h, lon_0=sat_lon, sweep=sat_sweep)
 
                 XX, YY = np.meshgrid(x, y)
                 lons, lats = p(XX, YY, inverse=True)
 
+                #coordenadas geograficas para recortar la imagen
                 bound = {'lon': [-81.03,-64], 
                         'lat': [-4.1,12.78]}
 
+                #coordenadas de la imagen para recortar 
                 xmin,ymin = p(bound['lon'][0],bound['lat'][0])/sat_h
                 xmax,ymax = p(bound['lon'][1],bound['lat'][1])/sat_h
 
+                #selección de coordenadas dentro de los límites definidos en bound
                 sel_x = np.where((x>=xmin) & (x<=xmax))
                 sel_y = np.where((y>=ymin) & (y<=ymax))
 
@@ -142,6 +152,7 @@ def get_Rad(date_ini,date_fin):
                 print("Croping radiance images...")
                 print("\n")
 
+                #selección de datos de radianza dentro de la región recortada
                 try:
                     Rad8 = ds8.variables['Rad'][sel_y[0].min():sel_y[0].max()+1,sel_x[0].min():sel_x[0].max()+1]
                 except NameError:
@@ -166,7 +177,8 @@ def get_Rad(date_ini,date_fin):
                     Rad14 = ds14.variables['Rad'][sel_y[0].min():sel_y[0].max()+1,sel_x[0].min():sel_x[0].max()+1]
                 except NameError: 
                     pass
-
+                
+                #generando arreglos de latitud y longitud de la imagen recordata
                 x_, y_ = np.meshgrid(x_col*sat_h, y_col*sat_h)
                 lon_colombia, lat_colombia = p(x_, y_, inverse=True)
 
@@ -175,8 +187,11 @@ def get_Rad(date_ini,date_fin):
 
                 print("Creating new NETCDF file with all bands radiances...")
                 print("\n")
+                #se crea un nuevo netcdf, una nueva imagen
                 file_name = 'RadF_' + date + '.nc'
                 ds_out = Dataset(file_name,'w',format='NETCDF4')
+
+                #se generan las dimensiones de la imagen recortada
                 ds_out.createDimension('y',len(y_col))
                 ds_out.createDimension('x',len(x_col))
                     
@@ -188,6 +203,7 @@ def get_Rad(date_ini,date_fin):
                 else: 
                     datatype = 'i2'         
 
+                #se crean variables con cada una de las bandas de las radianzas y se insertan los datos
                 try: 
                     dsRad8 = ds_out.createVariable('Rad8',datatype,('y','x',),fill_value=fill)
                     dsRad8.setncatts({k: ds8.variables['Rad'].getncattr(k) for k in ds8.variables['Rad'].ncattrs()})
@@ -226,6 +242,7 @@ def get_Rad(date_ini,date_fin):
                 print("Saving data in the new NETCDF file...")
                 print("\n")
 
+                #se crea la variable de las coordenadas geograficas
                 lat = ds_out.createVariable('lat','i2',('y',))
                 lon = ds_out.createVariable('lon','i2',('x',))
 
@@ -237,6 +254,7 @@ def get_Rad(date_ini,date_fin):
                 min_lon = lon_colombia_.min()
                 min_lat = lat_colombia_.min()
 
+                #se calcula y se agrega el factor de escala
                 scale_factor_lon = (max_lon - min_lon) / (2 ** n - 1)
                 add_offset_lon = min_lon + 2 ** (n - 1) * scale_factor_lon
 
@@ -252,7 +270,10 @@ def get_Rad(date_ini,date_fin):
                 lat[:] = lat_colombia_
                 lon[:] = lon_colombia_
 
+                #se agrega como parametro la lista de radianzas faltantes
                 ds_out.missing_rad = missing_rad
+
+                #se cierran todos los datasets abiertos
                 ds_out.close()
                 ds.close()
                 
@@ -271,6 +292,7 @@ def get_Rad(date_ini,date_fin):
                 if name + '14_G16_s' + date in lista_paths:
                     ds14.close()
 
+                #se ejecuta un comando de terminal invocado desde python que realiza la compresión de las imagenes
                 print("Compressig file...")
                 comman_line_compression = os.system(f"nccopy -d9 {file_name} {path_out_c + 'RadFC_' + date}")
                 if comman_line_compression == 0:
@@ -288,7 +310,8 @@ def get_Rad(date_ini,date_fin):
                     print(f"The file {file_name} does exist")
                     print("\n") 
                     break  
-                
+
+                #se eliminan las imagenes completas, se dejan las recortadas
                 print("Removing originals incompressing files...")
                 print("\n")
                 if os.path.isfile(f"{path_out + name + '08_G16_s'+ date}"):
