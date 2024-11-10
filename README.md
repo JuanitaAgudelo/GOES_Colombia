@@ -1,5 +1,13 @@
 # GOES_Colombia
 
+### Para correr la app por primera vez ejecutar: 
+  ```sh
+  pip install -r requirements.txt
+  ```
+Despues de instalar las librerias ejecutar:
+  ```sh
+  python app.py
+  ```
 
 ### Generación de imágenes satelitales de los productos LST, TPW y radianzas bandas 8,9,10,13,14 al rededor de Colombia
 
