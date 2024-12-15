@@ -1,0 +1,74 @@
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+}
+
+.header {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #3b5998;
+    color: white;
+    height: 60px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+    text-align: center;
+    font-family: "Segoe UI";
+}
+
+.header div {
+    font-size: 14px;
+    color: #e0e0e0;
+}
+
+.content-container {
+    display: flex;
+    flex: 1;
+}
+
+.sidebar {
+    width: 300px;
+    padding: 20px;
+    background-color: #d6dbdf;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+#map {
+    flex-grow: 1;
+    height: 100%;
+    width: 100%;
+}
+
+.info-card {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .app-layout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+    .main-content {
+        flex-grow: 1;
+    }
+    #map {
+        height: 60vh;
+    }
+}
