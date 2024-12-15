@@ -350,13 +350,13 @@ def download():
             name_date_ini = lista_paths[5:9] + '-' + lista_paths[9:11] + '-' + lista_paths[11:13] + '-' + lista_paths[13:15] + '-' + lista_paths[15:17] 
             name_date_ini = datetime.strptime(name_date_ini, '%Y-%m-%d-%H-%M')
 
-            date_ini_next = name_date_ini + timedelta(minutes=20)
+            date_ini_next = name_date_ini + timedelta(minutes=60)
             date_ini = date_ini_next.strftime("%Y-%m-%y %H:%M")
 
             date_fin_next = date_ini_next + timedelta(minutes=9)
             date_fin = date_fin_next.strftime("%Y-%m-%y %H:%M")
 
-            print('Obtaining next radiances {date_ini} - {date_fin}')
+            print(f'Obtaining next radiances {date_ini} - {date_fin}')
             get_Rad(date_ini, date_fin)
 
         else: 
