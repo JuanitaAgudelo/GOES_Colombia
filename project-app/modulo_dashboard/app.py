@@ -194,7 +194,7 @@ def set_card(cities, variable, resolution):
     ciudad_lon = city[1]
 
     lista_paths = os.listdir('radiances/')
-    date = lista_paths[-1][5:9] + '-' + lista_paths[-1][9:11] + '-' + lista_paths[-1][11:13] + ' ' + lista_paths[-1][13:17]
+    date = lista_paths[0][5:9] + '-' + lista_paths[0][9:11] + '-' + lista_paths[0][11:13] + ' ' + lista_paths[0][13:17]
     
     list_of_files = glob.glob('radiances/*.nc') # * means all if need specific format then *.csv
     latest_file = max(list_of_files, key=os.path.getctime)
