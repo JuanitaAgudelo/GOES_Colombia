@@ -70,6 +70,7 @@ def get_Rad(date_ini,date_fin):
             T_fin = T_fin.replace(' ', '-')
             
             #descarga las imágenes
+            print(T_ini, T_fin)
             try: 
                 download = GOES.download('goes16', 'ABI-L1b-RadF', DateTimeIni = T_ini, DateTimeFin = T_fin,
                     channel = canales, rename_fmt = '%Y%m%d%H%M%S', path_out = path_out)
@@ -346,16 +347,16 @@ def download():
         print('radiance folder already created')
         if os.listdir('radiances/'):
             print('there exist radiances in the folder')
-            lista_paths = os.listdir('radiances/')[0]
+            lista_paths = os.listdir('radiances/')[-1]
             name_date_ini = lista_paths[5:9] + '-' + lista_paths[9:11] + '-' + lista_paths[11:13] + '-' + lista_paths[13:15] + '-' + lista_paths[15:17] 
+           
             name_date_ini = datetime.strptime(name_date_ini, '%Y-%m-%d-%H-%M')
-
             date_ini_next = name_date_ini + timedelta(minutes=60)
             date_ini = date_ini_next.strftime("%Y-%m-%y %H:%M")
-
+           
             date_fin_next = date_ini_next + timedelta(minutes=9)
-            date_fin = date_fin_next.strftime("%Y-%m-%y %H:%M")
-
+            date_fin = date_fin_next.strftime("%Y-%m-%d %H:%M")
+        
             print(f'Obtaining next radiances {date_ini} - {date_fin}')
             get_Rad(date_ini, date_fin)
 
