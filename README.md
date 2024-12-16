@@ -6,7 +6,11 @@
   ```
 Despues de instalar las librerias ejecutar:
   ```sh
-  python app.py
+  chmod +x launch.sh
+  ```
+Para otorgar los permisos de ejecucion a launch.sh, luego ejecutar los procesos en paralelo 
+  ```sh
+  ./launch.sh
   ```
 
 ### Generación de imágenes satelitales de los productos LST, TPW y radianzas bandas 8,9,10,13,14 al rededor de Colombia
