@@ -352,7 +352,7 @@ def download():
            
             name_date_ini = datetime.strptime(name_date_ini, '%Y-%m-%d-%H-%M')
             date_ini_next = name_date_ini + timedelta(minutes=60)
-            date_ini = date_ini_next.strftime("%Y-%m-%y %H:%M")
+            date_ini = date_ini_next.strftime("%Y-%m-%d %H:%M")
            
             date_fin_next = date_ini_next + timedelta(minutes=9)
             date_fin = date_fin_next.strftime("%Y-%m-%d %H:%M")
