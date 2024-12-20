@@ -7,6 +7,7 @@ import os
 import numpy as np
 from netCDF4 import Dataset
 import glob
+import json
 
 def find_near_point(lat, lon, ciudad_lat, ciudad_lon, malla):
     lat, lon = np.meshgrid(lat, lon) 
@@ -89,6 +90,11 @@ data_city = {'Medellin': [6.25204,-75.582588], 'Bogota': [4.653074,-74.106448], 
                 'Palmira': [3.865814,-67.924432], 'Pamplona': [7.372149,-72.650551], 'Quibdo': [5.692077,-76.653716],
                 'Rionegro': [6.148405,-75.378508], 'Sogamoso': [5.729765,-72.927993], 'Tumaco': [1.775423,-78.78793],
                 'Zipaquira': [5.021561,-73.995758]}
+
+
+with open('coordinates.json', "r", encoding="utf-8") as file:
+    coordinates = json.load(file)
+
 
 # Define the layout
 app.layout = html.Div(className="app-layout", children=[
@@ -193,10 +199,10 @@ def set_card(cities, variable, resolution):
     ciudad_lat = city[0]
     ciudad_lon = city[1]
 
-    lista_paths = os.listdir('radiances/')
+    lista_paths = os.listdir('../radiances/')
     date = lista_paths[0][5:9] + '-' + lista_paths[0][9:11] + '-' + lista_paths[0][11:13] + ' ' + lista_paths[0][13:17]
     
-    list_of_files = glob.glob('radiances/*.nc') # * means all if need specific format then *.csv
+    list_of_files = glob.glob('../radiances/*.nc') 
     latest_file = max(list_of_files, key=os.path.getctime)
 
     ds1 = Dataset(latest_file)
@@ -270,11 +276,8 @@ def heatmap_plot(cities, resolution):
     ciudad_lat = city[0]
     ciudad_lon = city[1]
 
-    lista_paths = os.listdir('radiances/')
-
-    ds1 = Dataset('radiances/'+lista_paths[-1])
-    lat = ds1['lat'][:]
-    lon = ds1['lon'][:]
+    lat = coordinates['lat']
+    lon = coordinates['lon']
 
     lat_near, lon_near, lat_points, lon_points = find_near_point(lat, lon, ciudad_lat, ciudad_lon, resolution)
     bounds = [[lat_points[0,0], lon_points[0,0]], [lat_points[-1,-1], lon_points[-1,-1]]]
