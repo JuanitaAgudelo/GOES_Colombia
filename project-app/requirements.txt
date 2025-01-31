@@ -1,0 +1,8 @@
+dash==2.18.1
+dash-bootstrap-components==1.6.0
+dash-leaflet==1.0.15
+numpy
+pandas
+netCDF4
+GOES
+pyproj

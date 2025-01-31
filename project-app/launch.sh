@@ -3,18 +3,26 @@
 # Get the directory of the script
 SCRIPT_DIR=$(dirname "$0")
 
-# Activate the virtual environment using a relative path
-source "$SCRIPT_DIR/venv/bin/activate"
+# Find the correct Python version
+if command -v python3 &>/dev/null; then
+    PYTHON=python3
+elif command -v python &>/dev/null; then
+    PYTHON=python
+else
+    echo "Error: Python is not installed."
+    exit 1
+fi
+
 
 # Continue with the rest of the script
 echo "Iniciando el módulo de procesamiento..."
-python "$SCRIPT_DIR/modulo_procesamiento/processing.py" &
+$PYTHON "$SCRIPT_DIR/modulo_procesamiento/processing.py" &
 PROCESAMIENTO_PID=$!
 
 sleep 49
 
 echo "Iniciando el dashboard..."
-python "$SCRIPT_DIR/modulo_dashboard/app.py" &
+$PYTHON "$SCRIPT_DIR/modulo_dashboard/app.py" &
 DASHBOARD_PID=$!
 
 wait $PROCESAMIENTO_PID $DASHBOARD_PID

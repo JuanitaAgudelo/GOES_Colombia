@@ -9,6 +9,8 @@ from netCDF4 import Dataset
 import glob
 import json
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def find_near_point(lat, lon, ciudad_lat, ciudad_lon, malla):
     lat, lon = np.meshgrid(lat, lon) 
 
@@ -91,8 +93,8 @@ data_city = {'Medellin': [6.25204,-75.582588], 'Bogota': [4.653074,-74.106448], 
                 'Rionegro': [6.148405,-75.378508], 'Sogamoso': [5.729765,-72.927993], 'Tumaco': [1.775423,-78.78793],
                 'Zipaquira': [5.021561,-73.995758]}
 
-
-with open('coordinates.json', "r", encoding="utf-8") as file:
+coordinates_path = os.path.join(SCRIPT_DIR, 'coordinates.json')
+with open(coordinates_path, "r", encoding="utf-8") as file:
     coordinates = json.load(file)
 
 
@@ -199,10 +201,15 @@ def set_card(cities, variable, resolution):
     ciudad_lat = city[0]
     ciudad_lon = city[1]
 
-    lista_paths = os.listdir('../radiances/')
+    project_root = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
+    radiances_path = os.path.join(project_root, 'radiances')
+    #radiances_path_fix = '/mnt/c/Users/aguju/Documents/joven-investigador/repository/GOES_Colombia/project-app/radiances'
+
+    lista_paths = os.listdir(radiances_path)
     date = lista_paths[0][5:9] + '-' + lista_paths[0][9:11] + '-' + lista_paths[0][11:13] + ' ' + lista_paths[0][13:17]
     
-    list_of_files = glob.glob('../radiances/*.nc') 
+    files_path = os.path.join(radiances_path, '*.nc')
+    list_of_files = glob.glob(files_path) 
     latest_file = max(list_of_files, key=os.path.getctime)
 
     ds1 = Dataset(latest_file)
@@ -286,4 +293,4 @@ def heatmap_plot(cities, resolution):
     return bounds, center, zoom       
     
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8051)  
+    app.run_server(debug=True, port=8050)  
