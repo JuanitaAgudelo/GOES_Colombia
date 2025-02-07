@@ -349,7 +349,6 @@ def download():
             print('there exist radiances in the folder')
             lista_paths = os.listdir('radiances_c/')[-1]
             name_date_ini = lista_paths[5:9] + '-' + lista_paths[9:11] + '-' + lista_paths[11:13] + '-' + lista_paths[13:15] + '-' + lista_paths[15:17] 
-           
             name_date_ini = datetime.strptime(name_date_ini, '%Y-%m-%d-%H-%M')
             date_ini_next = name_date_ini + timedelta(minutes=60)
             date_ini = date_ini_next.strftime("%Y-%m-%d %H:%M")

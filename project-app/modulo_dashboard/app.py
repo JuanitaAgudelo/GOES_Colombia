@@ -203,7 +203,7 @@ def set_card(cities, variable, resolution):
     ciudad_lon = city[1]
 
     project_root = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
-    radiances_path = os.path.join(project_root, 'radiances')
+    radiances_path = os.path.join(project_root, 'radiances_c')
     #radiances_path_fix = '/mnt/c/Users/aguju/Documents/joven-investigador/repository/GOES_Colombia/project-app/radiances'
 
     lista_paths = os.listdir(radiances_path)
@@ -263,6 +263,7 @@ def set_card(cities, variable, resolution):
             html.Span("Resolucion: ", style={"fontWeight": "bold"}),
             f"{choosed_resolution}"]
     
+    ds1.close()
     return choosed_city, content_var, content_date, content_resolution 
 
 @app.callback(
