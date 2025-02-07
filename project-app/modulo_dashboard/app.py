@@ -142,7 +142,8 @@ app.layout = html.Div(className="app-layout", children=[
                     html.P(id="date-name", children="Date name", className="card-text"),
                     html.P(id="resolution-name", children="Resolution name", className="card-text")
                 ]), 
-            )
+            ),
+            html.P("Proyecto académico. No nos responsabilizamos del uso de los datos. La información se obtuvo de Datos Abiertos. Última actualización: Enero de 2023. Conctactanos al facomestaciones@gmail.com", className="text-center"),
     ]), 
 
         # Main content

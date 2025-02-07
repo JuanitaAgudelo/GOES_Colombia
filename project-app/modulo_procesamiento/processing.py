@@ -186,7 +186,7 @@ def get_Rad(date_ini,date_fin):
                 print("Creating new NETCDF file with all bands radiances...")
                 print("\n")
                 #se crea un nuevo netcdf, una nueva imagen
-                file_name = path_out + '/RadF_' + date 
+                file_name = path_out_c + '/RadF_' + date 
                 ds_out = Dataset(file_name,'w',format='NETCDF4')
 
                 #se generan las dimensiones de la imagen recortada
@@ -342,12 +342,12 @@ def get_Rad(date_ini,date_fin):
 
 def download():
     print('Cheking radiances folder')
-    isExist = os.path.exists('radiances')  
+    isExist = os.path.exists('radiances_c')  
     if isExist:
         print('radiance folder already created')
-        if os.listdir('radiances/'):
+        if os.listdir('radiances_c/'):
             print('there exist radiances in the folder')
-            lista_paths = os.listdir('radiances/')[-1]
+            lista_paths = os.listdir('radiances_c/')[-1]
             name_date_ini = lista_paths[5:9] + '-' + lista_paths[9:11] + '-' + lista_paths[11:13] + '-' + lista_paths[13:15] + '-' + lista_paths[15:17] 
            
             name_date_ini = datetime.strptime(name_date_ini, '%Y-%m-%d-%H-%M')
