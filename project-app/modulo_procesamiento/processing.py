@@ -46,16 +46,15 @@ def get_Rad(date_ini,date_fin):
     
     if not os.path.exists(original_path):  #antes de crear el directorio, valida que no exista
         os.mkdir(original_path)  #crea el directorio con la carpeta donde se almacenan las imagenes completas     
-    
+        print("Directory '% s' created" % original_path) 
     if not os.path.exists(path_c):  #antes de crear el directorio, valida que no exista
         os.mkdir(path_c)  #crea el directorio con la carpeta donde se almacenan las imagenes recortadas y comprimidas
-            
-    print("Directory '% s' created" % original_path) 
-    print("Directory '% s' created" % path_c) 
+        print("Directory '% s' created" % path_c) 
+
 
     for dd in (df['Tiempo']):
         try: 
-            print('Datetime:',dd)
+            print('Fecha a descargar:',dd)
             print("\n")
 
             #transforma las fechas del dataframe de timestep a formato '%Y%m%d%H%M%S'
@@ -70,7 +69,6 @@ def get_Rad(date_ini,date_fin):
             T_fin = T_fin.replace(' ', '-')
             
             #descarga las imágenes
-            print(T_ini, T_fin)
             try: 
                 download = GOES.download('goes16', 'ABI-L1b-RadF', DateTimeIni = T_ini, DateTimeFin = T_fin,
                     channel = canales, rename_fmt = '%Y%m%d%H%M%S', path_out = path_out)
@@ -341,25 +339,34 @@ def get_Rad(date_ini,date_fin):
             print("\n")
 
 def download():
-    print('Cheking radiances folder')
+    print(' - Cheking radiances folder')
     isExist = os.path.exists('radiances_c')  
+
     if isExist:
-        print('radiance folder already created')
+        print(' - radiance folder already created')
+
         if os.listdir('radiances_c/'):
-            print('there exist radiances in the folder')
-            lista_paths = os.listdir('radiances_c/')[-1]
-            name_date_ini = lista_paths[5:9] + '-' + lista_paths[9:11] + '-' + lista_paths[11:13] + '-' + lista_paths[13:15] + '-' + lista_paths[15:17] 
-            name_date_ini = datetime.strptime(name_date_ini, '%Y-%m-%d-%H-%M')
+            print(' - There exist radiances in the folder: radiances_c/')
+
+            lista_radiances = os.listdir('radiances_c/')
+            date_radiance_list = []
+            for file in lista_radiances:
+                date_radiance = file[5:9] + '-' + file[9:11] + '-' + file[11:13] + '-' + file[13:15] + '-' + file[15:17] 
+                date_radiance_list.append(datetime.strptime(date_radiance, '%Y-%m-%d-%H-%M')) 
+
+            name_date_ini = max(date_radiance_list) 
             date_ini_next = name_date_ini + timedelta(minutes=60)
             date_ini = date_ini_next.strftime("%Y-%m-%d %H:%M")
            
             date_fin_next = date_ini_next + timedelta(minutes=9)
             date_fin = date_fin_next.strftime("%Y-%m-%d %H:%M")
         
-            print(f'Obtaining next radiances {date_ini} - {date_fin}')
+            print(f' - Obtaining next radiances {date_ini} - {date_fin}')
             get_Rad(date_ini, date_fin)
 
         else: 
+            print('Empty folder: radiances_c/')
+
             c = datetime.now()
             current_time = c.strftime('%Y-%m-%d %H:%M:%S')
             current_time = current_time[:-5] + '00:00'
@@ -370,7 +377,8 @@ def download():
             get_Rad(date_ini, date_fin)
 
     else: 
-        print('The folder with the radiances does not exist, creating the folder') 
+        print('The folder radiances_c/ does not exist, creating the folder') 
+
         c = datetime.now()
         current_time = c.strftime('%Y-%m-%d %H:%M:%S')
         current_time = current_time[:-5] + '00:00'
