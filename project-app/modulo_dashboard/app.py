@@ -8,6 +8,7 @@ import numpy as np
 from netCDF4 import Dataset
 import glob
 import json
+from datetime import datetime
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -208,11 +209,17 @@ def set_card(cities, variable, resolution):
     #radiances_path_fix = '/mnt/c/Users/aguju/Documents/joven-investigador/repository/GOES_Colombia/project-app/radiances'
 
     lista_paths = os.listdir(radiances_path)
-    date = lista_paths[0][5:9] + '-' + lista_paths[0][9:11] + '-' + lista_paths[0][11:13] + ' ' + lista_paths[0][13:17]
+    date_radiance_list = []
+    for file in lista_paths:
+        date_radiance = file[5:9] + '-' + file[9:11] + '-' + file[11:13] + '-' + file[13:15] + '-' + file[15:17] 
+        date_radiance_list.append(datetime.strptime(date_radiance, '%Y-%m-%d-%H-%M')) 
+
+    latest_date = max(date_radiance_list) 
+    position_file = date_radiance_list.index(latest_date)
     
     files_path = os.path.join(radiances_path, '*.nc')
     list_of_files = glob.glob(files_path) 
-    latest_file = max(list_of_files, key=os.path.getctime)
+    latest_file = list_of_files[position_file]
 
     ds1 = Dataset(latest_file)
     lat = ds1['lat'][:]
@@ -258,7 +265,7 @@ def set_card(cities, variable, resolution):
     
     content_date = [
             html.Span("Fecha: ", style={"fontWeight": "bold"}),
-            f"{date}"]
+            f"{latest_date}"]
     
     content_resolution = [
             html.Span("Resolucion: ", style={"fontWeight": "bold"}),
